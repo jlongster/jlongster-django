@@ -6,17 +6,17 @@ from funfactory.settings_base import *
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
-        'OPTIONS': {
-            'init_command': 'SET storage_engine=InnoDB',
-            'charset' : 'utf8',
-            'use_unicode' : True,
-        },
+        # 'OPTIONS': {
+        #     'init_command': 'SET storage_engine=InnoDB',
+        #     'charset' : 'utf8',
+        #     'use_unicode' : True,
+        # },
         'TEST_CHARSET': 'utf8',
         'TEST_COLLATION': 'utf8_general_ci',
     },
@@ -55,3 +55,31 @@ DEV = True
 # BROKER_PASSWORD = 'playdoh'
 # BROKER_VHOST = 'playdoh'
 # CELERY_RESULT_BACKEND = 'amqp'
+
+INSTALLED_APPS = INSTALLED_APPS + (
+    'django.contrib.admin',
+    'django.contrib.sessions',
+
+    'legacy',
+    'docs',
+    'ablog',
+    'tech'
+)
+
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+
+    'commonware.middleware.FrameOptionsHeader',
+)
+
+def JINJA_CONFIG():
+    import jinja2
+    from django.conf import settings
+    config = {'extensions': ['tower.template.i18n', 'jinja2.ext.do',
+                             'jinja2.ext.with_', 'jinja2.ext.loopcontrols'],
+              'finalize': lambda x: x if x is not None else ''}
+    return config
