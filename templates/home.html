@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block page_id %}home{% endblock %}
+
+{% block content %}
+
+<div class="intro">
+  <p>
+    My name is James long, and I'm a web developer
+    for <a href="http://mozilla.com/">Mozilla</a>. I work mostly on
+    <a href="http://mozilla.com/">mozilla.com</a>, and am interested
+    in canvas/webgl, language theory, game mechanics and more. Follow
+    my work and interests here.
+  </p>
+</div>
+
+<div class="blog">
+  <div class="inner">
+    <h1><a href="/blog">Blog</a></h1>
+
+    {% for post in posts %}
+    <div class="post">
+      <h2><a href="{{ post.url() }}">{{ post.title }}</a></h2>
+      <div class="date">{{ post.published_date }}</div>
+      <p>{{ post.abstract }}</p>
+      <div class="tags">
+        Tags:
+        {% for tag in post.tags.all() %}
+        <a href="/blog/tag/{{ tag }}">{{ tag }}</a>{% if not loop.last %},{% endif %}
+        {% else %}
+        none
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <em>No posts found</em>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="tech">
+  <div class="inner">
+    <h1><a href="/tech">Tech</a></h1>
+
+    {% for post in tech_posts %}
+    <div class="post">
+      <h2><a href="{{ post.url() }}">{{ post.title }}</a></h2>
+      <div class="date">Last updated: {{ post.updated_date }}</div>
+      <p>{{ post.abstract }}</p>
+    </div>
+    {% else %}
+    <em>No posts found</em>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

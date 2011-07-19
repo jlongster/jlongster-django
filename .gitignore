@@ -1,3 +1,5 @@
+.#*
+db
 settings_local.py
 *.py[co]
 *.sw[po]
@@ -14,3 +16,4 @@ build.py
 tmp/*
 *~
 *.mo
+venv

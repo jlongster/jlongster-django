@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block page_id %}post{% endblock %}
+
+{% block content %}
+
+<h1>Tag: {{ tag }}</h1>
+
+{% for post in posts %}
+
+<div class="post">
+  <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+  <div class="date">{{ post.published_date }}</div>
+  <p>{{ post.abstract }}</p>
+</div>
+
+{% endfor %}
+
+{% endblock %}

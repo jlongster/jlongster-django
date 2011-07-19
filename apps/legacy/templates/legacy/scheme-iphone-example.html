@@ -1,0 +1,110 @@
+<html>
+  <head>
+    <title>jlongster - Using Scheme for iPhone apps</title>
+    <meta content="programming,graphics,2d,3d,rendering,scheme,lisp" name="keywords" />
+    <meta content="A collection of projects and blog posts about Lisp and Scheme from James Long" name="description" />
+
+    <link href="/media/legacy/css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="/feeds/blog" rel="alternate" title="jlongster - blog feed" type="application/rss+xml" />
+    <script src="/media/js/jmod-1.0.4.min.js" type="text/javascript"></script>
+    <script type="text/javascript">jMod.config({path: '/media/js'});jMod.load('main');</script>
+  </head>
+  <body>
+    <div class="body-wrapper">
+      <div class="outdated">
+        <p>
+          This site has been decommissioned, but this content has been preserved because <br />
+          it is still useful to people.
+        </p>
+        <p>
+          Don't expect all the links to work.
+        </p>
+        <p>
+          Feel free to continue my work, copy these pages and projects, and do whatever <br />
+          you feel passionate about.  I am no longer developer this.
+      </div>
+
+      <div class="title"><a href="/"><h1>jlongster</h1></a></div><div class="nav"><a class="selected" href="/software">software development</a> - <a class="" href="/blog">blog</a> - <a class="" href="/about">about</a></div><div><h2>Using Scheme for iPhone apps</h2><p><img src="/media/legacy/images/logo-model.png" /></p>
+
+<h3>Download</h3>
+
+<p>You can download the example project from
+<a href="http://github.com/jlongster/gambit-iphone-example/tree/master">the github project</a>.</p>
+
+<h3>Description</h3>
+
+<p><a href="http://dynamo.iro.umontreal.ca/~gambit/wiki/index.php/Main_Page/">Gambit Scheme</a>
+is a Scheme implementation which compiles to C and makes efficient
+executables. It can be compiled for the iPhone, meaning you can
+write full iPhone apps in Scheme.</p>
+
+<p>I will flesh out this page more in the future, but this should
+help you get started using Gambit Scheme on the iPhone.</p>
+
+<p>The
+<a href="http://github.com/jlongster/gambit-iphone-example/tree/master">the example project</a>
+comes with an Xcode project for compiling an example application
+for the iPhone. It also has a Makefile which will compile the
+scheme files to C, which you must do first, and then you can use
+the Xcode project to compile everything into an iPhone app.</p>
+
+<p>Please refer to
+<a href="/blog/2009/06/17/write-apps-iphone-scheme/">my blog post</a>
+for a detailed explanation of compiling Gambit Scheme apps for the
+iPhone.</p>
+
+<h3>Compiling Gambit for the iPhone</h3>
+
+<p>Before you do any of this though, you must compile Gambit against
+the iPhone SDKs and cross-compile to ARM if you are targeting the
+device.
+<a href="/blog/2009/06/17/write-apps-iphone-scheme/">My blog post</a>
+about this shows you how to do it manually, but I have created a
+script called
+<a href="https://github.com/jlongster/configure-iphone">configure-iphone</a> which will
+automatically call <code>./configure</code> in a library to setup the
+appropriate build commands.</p>
+
+<p>Using <code>configure-iphone</code>, here's how you build Gambit:</p>
+
+<pre><code>$ http://www.iro.umontreal.ca/~gambit/download/gambit/v4.6/source/gambc-v4_6_0.tgz
+$ tar xvzf gambc-v4_6_0.tgz
+$ cd gambc-v4_6_0
+$ configure-iphone 3.1.2 -t os -- --enable-single-host
+$ make
+$ sudo make install
+</code></pre>
+
+<p>This builds Gambit v4.6.0 against the iPhone OS 3.1.2 SDK and
+cross-compiles it to ARM. The resulting libraries reside in
+<code>/usr/local/iphone/iPhoneOS3.1.2</code>. Please consult
+<a href="https://github.com/jlongster/configure-iphone">configure-iphone</a> for more
+information about how it works. You can link against the Simulator
+SDKs by dropping the <code>-t os</code> argument to <code>configure-iphone</code> or by
+explicitly passing <code>-t simulator</code>.</p>
+
+<p><code>--enable-single-host</code> is passed straight through the
+<code>./configure</code>, and is a Gambit-specific option which is recommended
+when building from scratch. It produces more efficient code.
+Please consult Gambit's INSTALL.txt for more info.</p>
+
+<h3>Debugging</h3>
+
+<p>You should debug it with the debugger described in
+<a href="/blog/2009/07/05/remotely-debugging-iphone-scheme/">this post</a>.
+Please contact me if you have any questions trying to work
+with Gambit Scheme on the iPhone.  The developer environment
+is unfriendly and you'll most likely have problems getting
+the debugger working.</p>
+</div><div class="footer"><a href="http://twitter.com/jlongster">twitter</a> | <a href="mailto:jlongster@jlongster.com">email</a> | powered by <a href="http://clojure.org/">clojure</a> | &copy; 2010 James Long</div><script type="text/javascript"> 
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script> 
+<script type="text/javascript"> 
+      try {
+      var pageTracker = _gat._getTracker("UA-9014321-1");
+      pageTracker._trackPageview();
+      } catch(err) {}
+</script>
+</div></body>
+</html>

@@ -1,0 +1,206 @@
+/* line 20, main.scss */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+  font-family: Verdana;
+  font-size: .85em;
+}
+
+/* line 28, main.scss */
+.clear {
+  clear: both;
+}
+
+/* line 32, main.scss */
+.content {
+  width: 776px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+/* line 40, main.scss */
+.header {
+  height: 2.1em;
+  background-color: #424242;
+  color: white;
+  width: 800px;
+  margin: 0 auto;
+}
+/* line 50, main.scss */
+.header a, .header a:visited, .header a:active {
+  text-decoration: none;
+  color: white;
+}
+/* line 55, main.scss */
+.header .logo {
+  float: left;
+  padding-top: 0.375em;
+  margin: 0 1em;
+  font-weight: bold;
+}
+/* line 62, main.scss */
+.header .nav {
+  float: left;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* line 69, main.scss */
+.header .nav li {
+  float: left;
+}
+/* line 72, main.scss */
+.header .nav li a, .header .nav li a:visited, .header .nav li a:active {
+  display: block;
+  height: 1.725em;
+  padding: 0.375em 0.5em 0 0.5em;
+}
+/* line 79, main.scss */
+.header .nav .sep {
+  padding: 0;
+  padding-top: 0.375em;
+}
+/* line 85, main.scss */
+.header .nav li:hover {
+  background-color: #5d5d5d;
+}
+/* line 88, main.scss */
+.header .nav li:hover .subnav {
+  height: 6.75em;
+  -moz-transition: height .5s;
+}
+/* line 94, main.scss */
+.header .subnav {
+  position: absolute;
+  top: 2.1em;
+  left: 0;
+  height: 0;
+  list-style: none;
+  padding: 0;
+  background-color: #5d5d5d;
+  overflow: hidden;
+  -moz-transition: height .5s;
+}
+/* line 105, main.scss */
+.header .subnav li {
+  float: none;
+}
+/* line 108, main.scss */
+.header .subnav li a, .header .subnav li a:visited, .header .subnav li a:active {
+  height: 1.25em;
+  padding: .5em 1em;
+}
+/* line 114, main.scss */
+.header .subnav li:nth-of-type(2n-1) {
+  background-color: #6a6a6a;
+}
+/* line 120, main.scss */
+.header .tech a:hover {
+  background-color: #3299bb;
+}
+/* line 125, main.scss */
+.header .blog a:hover {
+  background-color: #35b651;
+}
+/* line 129, main.scss */
+.header .contact a:hover {
+  background-color: #d37d38;
+}
+
+/* line 136, main.scss */
+#home .content {
+  width: 776px;
+  margin: 0 auto;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 139, main.scss */
+#home .content .intro {
+  font-style: italic;
+}
+/* line 143, main.scss */
+#home .content .blog {
+  display: inline;
+  float: left;
+  margin-right: 10px;
+  width: 383px;
+}
+/* line 147, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #home .content .blog {
+  overflow-x: hidden;
+}
+/* line 147, main.scss */
+#home .content .tech {
+  display: inline;
+  float: left;
+  margin-right: 0;
+  width: 383px;
+}
+/* line 147, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #home .content .tech {
+  overflow-x: hidden;
+}
+
+/* line 152, main.scss */
+a, a:visited, a:active {
+  text-decoration: none;
+  color: black;
+}
+
+/* line 157, main.scss */
+a:hover {
+  text-decoration: underline;
+}
+
+/* line 162, main.scss */
+.intro a, .intro a:visited, .intro a:active {
+  color: #35b651;
+}
+
+/* line 170, main.scss */
+.tech .post a, .tech .post a:visited, .tech .post a:active,
+#tech .content a,
+#tech .content a:visited,
+#tech .content a:active,
+#tech-post .content a,
+#tech-post .content a:visited,
+#tech-post .content a:active {
+  color: #3299bb;
+}
+
+/* line 178, main.scss */
+.blog .post a, .blog .post a:visited, .blog .post a:active,
+#blog .content a,
+#blog .content a:visited,
+#blog .content a:active,
+#post .content a,
+#post .content a:visited,
+#post .content a:active {
+  color: #35b651;
+}
+
+/* line 184, main.scss */
+#contact .content a, #contact .content a:visited, #contact .content a:active {
+  color: #d37d38;
+}
+
+/* line 190, main.scss */
+.post-main h1,
+.post h2 {
+  margin-bottom: 0;
+}
+
+/* line 194, main.scss */
+.date {
+  color: grey;
+  font-style: italic;
+}
+
+/* line 199, main.scss */
+.tags {
+  font-size: .9em;
+  font-style: italic;
+  color: grey;
+}

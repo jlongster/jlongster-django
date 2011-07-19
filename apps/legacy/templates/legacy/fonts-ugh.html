@@ -1,0 +1,235 @@
+<html>
+  <head>
+    <title>jlongster - The painful state of fonts with OpenGL(ES)</title>
+    <meta content="programming,graphics,2d,3d,rendering,scheme,lisp" name="keywords" />
+    <meta content="A collection of projects and blog posts about Lisp and Scheme from James Long" name="description" />
+
+    <link href="/media/legacy/css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="/feeds/blog" rel="alternate" title="jlongster - blog feed" type="application/rss+xml" />
+    <script src="/media/js/jmod-1.0.4.min.js" type="text/javascript"></script>
+    <script type="text/javascript">jMod.config({path: '/media/js'});jMod.load('main');</script>
+  </head>
+  <body>
+    <div class="body-wrapper">
+      <div class="outdated">
+        <p>
+          This site has been decommissioned, but this content has been preserved because <br />
+          it is still useful to people.
+        </p>
+        <p>
+          Don't expect all the links to work.
+        </p>
+        <p>
+          Feel free to continue my work, copy these pages and projects, and do whatever <br />
+          you feel passionate about.  I am no longer developer this.
+      </div>
+
+      <div class="title"><a href="/"><h1>jlongster</h1></a></div><div class="nav"><a class="" href="/software">software development</a> - <a class="selected" href="/blog">blog</a> - <a class="" href="/about">about</a></div><div class="article"><h2>The painful state of fonts with OpenGL(ES)</h2><div class="date">February 8, 2010</div><div class="figure"><img src="/media/legacy/images/ftgles3.png" /></div>
+
+<p>Fonts. Ugh. I knew it would be a pain to integrate text rendering
+in my OpenGLES-based graphics framework. I was able to avoid it
+for long while using textures, but now that I'm about to publish
+an iPhone game, there's really no avoiding it any longer.</p>
+
+<p>I begrudgingly opened up google and typed in "opengl font
+rendering". The first result was
+<a href="http://www.opengl.org/resources/features/fontsurvey/">A Survey Of OpenGL Font Technology</a>
+straight from <a href="http://opengl.org/">opengl.org</a>.</p>
+
+<p>"There is no native font support in OpenGL. The ARB has rarely
+ever even discussed fonts." Yes, I knew that, so what options do I
+have? That page lists a smattering of font rendering libraries,
+most of them completely unusable due to some major restriction.
+The only one with potential was
+<a href="http://sourceforge.net/projects/ftgl/">FTGL</a>.</p>
+
+<h3>Searching for a solution</h3>
+
+<p>FTGL turned out to be my best bet, but the only problem was that
+it targeted OpenGL and I'm working with OpenGLES, which lacks many
+features of OpenGL. Luckily, it looks like David Petrie ported
+FTGL to OpenGLES with the cleverly-named project
+<a href="http://code.google.com/p/ftgles/">FTGLES</a>.</p>
+
+<div class="figure"><img src="/media/legacy/images/ftgles1.png" /></div>    
+
+<p>I'm very thankful for David's work on the port, but I was
+disappointed to find that I simply couldn't get the library to
+work. Another minor gripe is that FTGLES only comes with an Xcode
+project and not autoconf/automake scripts.</p>
+
+<p><a href="http://github.com/jlongster/ftgles">So I forked the damn thing</a>
+and got to work.</p>
+
+<p>At this point, I was frustrated. With all of the games being made
+on mobile devices in OpenGLES, you would think there would be more
+options or at least a clear and straightforward solution to text
+rendering. <strong>What are all of you guys doing</strong>? And why aren't you
+<strong>releasing</strong> or <strong>documenting</strong> it? Am I missing something? There
+are a couple good articles on this such as
+<a href="http://acornheroes.com/?p=44">Adding Font support in OpenGL - Acorn Heroes</a>,
+but that's far from a good reusable library.</p>
+
+<p>FTGL itself could use better documentation. I only found an
+<a href="http://ftgl.sourceforge.net/docs/html/">FTGL User Guide</a>
+which only contains a tutorial for the basic functionality. There
+are also a few API reference docs out there, but there really
+should be readable, helpful, and thorough documentation for a
+library that seems to be so critical for OpenGL applications (it
+really seems to be one of the few solutions for font rendering).</p>
+
+<p>We aren't even talking about smart textual layout yet. Writing an
+OpenGL backend for <a href="http://www.pango.org/">Pango</a> is
+really interesting but there's only a
+<a href="http://mail.gnome.org/archives/gtk-i18n-list/2006-July/msg00002.html">proof of concept</a>
+finished at this point. Supposedly Pango might be too slow for
+OpenGL applications, so I'll digress. Do games even integrate a
+textual layout system or do developers do everything manually?</p>
+
+<h3>FTGLES</h3>
+
+<p>Back to <a href="http://github.com/jlongster/ftgles">my fork of FTGLES</a>.</p>
+
+<p>I integrated the FTGLES source code with the original FTGL
+autoconf/automake build system so you can do the standard
+<code>./configure &amp;&amp; make install</code>. I also fixed a few bugs in
+the source which make it behave more predictably. I plan to
+contact David to see where he wants to take it from here, as I
+don't really like maintaining a separate fork of a project.</p>
+
+<h4>FreeType 2 and compiling for iPhone</h4>
+
+<p>FTGLES uses FreeType 2 to load TrueType font files, so we need to
+compile FreeType 2 for the iPhone. At this point I realized that
+people might need to compile many libraries for the iPhone
+(requiring cross-compilation to ARM), and it's really annoying to
+always remember how to configure the project to build correctly
+for the iPhone.</p>
+
+<p>I created the
+<a href="http://github.com/jlongster/configure-iphone">configure-iphone</a>
+
+project to help with this. It is basically a single shell script
+which wraps around your <code>./configure</code> call and appends the correct
+arguments to link with the right iPhone SDK and possibly
+cross-compile. Please see the
+<a href="http://github.com/jlongster/configure-iphone/blob/master/README">project README</a>
+for more info.</p>
+
+<p>With the <code>configure-iphone</code> utility script, I was able to compile
+FreeType 2 like so:</p>
+
+<ul>
+<li><code>wget http://download.savannah.gnu.org/releases-noredirect/freetype/freetype-2.3.11.tar.gz</code></li>
+
+<li><code>tar xvzf freetype-2.3.11.tar.gz</code></li>
+<li><code>cd freetype-2.3.11</code></li>
+<li><code>configure-iphone 3.1.2 -t os</code></li>
+<li><code>sudo make install</code></li>
+</ul>
+
+<p>By default, <code>configure-iphone</code> installs libraries in
+<code>/usr/local/iphone</code>, but you can override that with the <code>-d &lt;dir&gt;</code>
+
+options. Our libraries would end up in <code>/usr/local/iphone/iPhoneOS3.1.2</code>.</p>
+
+<p>Please note that there are articles such as
+<a href="http://theorian.com/2009/08/how-to-compile-freetype2-for-the-iphone/">this one</a>
+which describe tweaking parts of FreeType 2 in order for it to
+compile; you do NOT have to do this anymore as far as I'm
+concerned. Maybe they fixed that in that last couple minor
+versions, but the above commands compiles FreeType 2 for the
+iPhone just fine.</p>
+
+<h4>Compiling FTGLES</h4>
+
+<p>Compiling and installing FTGLES uses similar commands as compiling
+FreeType 2. You must tell FTGLES where your FreeType 2 library is
+located.  Here is how it would look:</p>
+
+<ul>
+<li><code>git clone git@github.com:jlongster/ftgles.git</code></li>
+<li><code>cd ftgles</code></li>
+<li><code>configure-iphone 3.1.2 -t os -- --with-ft-prefix=/usr/local/iphone/iPhoneOS3.1.2</code></li>
+<li><code>make</code></li>
+<li><code>sudo make install</code></li>
+</ul>
+
+<p>Now just make sure you link with the <code>ftgl</code> library and add
+
+<code>/usr/local/iphone/iPhoneOS3.1.2/include</code> and
+<code>/usr/local/iphone/iPhoneOS3.1.2/lib</code> to your header and library
+paths. The version and target may change, of course (target being
+either OS or Simulator).</p>
+
+<h4>Using FTGLES</h4>
+
+<p>For general information about using FTGL, read through this
+<a href="http://ftgl.sourceforge.net/docs/html/">FTGL User Guide</a>.</p>
+
+<p>The only thing specific to FTGLES is that you must call
+
+<code>ftglInitImmediateModeGL</code> to setup the vertex buffers correctly
+every frame before rendering any of the fonts. It took me a while
+to figure that out.</p>
+
+<p>Extruded, pixmap, and polygon fonts are not yet supported in the
+FTGLES port.</p>
+
+<p>The following is some pseudo C code which assumes <code>init</code> is called
+at the beginning of the program and <code>render</code> is called every
+frame. It renders the text "Hello, World" with the Batang
+TrueType font at the screen position (10, 0).</p>
+
+<pre><code>#include "FTGL/ftgles.h"
+
+FTGLFont *font;
+
+void init() {
+    font = ftglCreateTextureFont("Batang.ttf");
+}
+
+void render() {
+    // ... draw stuff ...
+
+    ftglInitImmediateModeGL();
+
+    glMatrixMode(GL_PROJECTION);
+    glOrthof(0.0f, width, 0.0f, height, -10.0f, 10.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glTranslatef(10.0f, 0.0f, 0.0f);
+    ftglSetFontFaceSize(font, 72);
+    ftglRenderFont(font, "Hello, World");
+}
+</code></pre>
+
+<h4>Scheme bindings</h4>
+
+<p>I have also writting some Scheme bindings, of course, if anyone is
+interested. Finally, I have OpenGL fonts in Scheme! And of course,
+my
+<a href="/blog/2010/01/29/tweening/">tweening functionality</a>
+works just fine with fonts.</p>
+
+<p><img src="/media/legacy/images/ftgles4.png" /></p>
+
+<p>Roll over, boy!</p>
+
+<p><object width="560" height="340"><param name="movie" value="http://www.youtube.com/v/h_mul5bFRBU&amp;hl=en_US&amp;fs=1&amp;"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/h_mul5bFRBU&amp;hl=en_US&amp;fs=1&amp;" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="560" height="340"></embed></object></p>
+
+<p>Woohoo!</p>
+<div class="supplement">Comments are not implemented yet. In the meanwhile, send me an <a href="mailto:jlongster@jlongster.com">email</a>.</div></div><div class="footer"><a href="http://twitter.com/jlongster">twitter</a> | <a href="mailto:jlongster@jlongster.com">email</a> | powered by <a href="http://clojure.org/">clojure</a> | &copy; 2010 James Long</div><script type="text/javascript"> 
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+
+</script> 
+<script type="text/javascript"> 
+      try {
+      var pageTracker = _gat._getTracker("UA-9014321-1");
+      pageTracker._trackPageview();
+      } catch(err) {}
+</script>
+</div></body>
+</html>

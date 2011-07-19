@@ -1,0 +1,204 @@
+<html>
+  <head>
+    <title>jlongster - Writing apps for the iPhone in Scheme</title>
+    <meta content="programming,graphics,2d,3d,rendering,scheme,lisp" name="keywords" />
+    <meta content="A collection of projects and blog posts about Lisp and Scheme from James Long" name="description" />
+
+    <link href="/media/legacy/css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="/feeds/blog" rel="alternate" title="jlongster - blog feed" type="application/rss+xml" />
+    <script src="/media/js/jmod-1.0.4.min.js" type="text/javascript"></script>
+    <script type="text/javascript">jMod.config({path: '/media/js'});jMod.load('main');</script>
+  </head>
+  <body>
+    <div class="body-wrapper">
+      <div class="outdated">
+        <p>
+          This site has been decommissioned, but this content has been preserved because <br />
+          it is still useful to people.
+        </p>
+        <p>
+          Don't expect all the links to work.
+        </p>
+        <p>
+          Feel free to continue my work, copy these pages and projects, and do whatever <br />
+          you feel passionate about.  I am no longer developer this.
+      </div>
+
+      <div class="title"><a href="/"><h1>jlongster</h1></a></div><div class="nav"><a class="" href="/software">software development</a> - <a class="selected" href="/blog">blog</a> - <a class="" href="/about">about</a></div><div class="article"><h2>Writing apps for the iPhone in Scheme</h2><div class="date">June 17, 2009</div>
+        <p>Apple seems to have a tight leash on how you can develop for the
+          iPhone. The User Agreement essentially states that you can only
+          program in Objective-C. Now, let's see... Objective-C is a superset of
+          C, correct? So C code is valid, right? If we only had something which
+          could <em>generate C for us</em>... it would take code in the language of our
+          choice and <em>compile</em> it to C without violating the User Agreement.</p>
+
+        <p>Luckily, my language of choice is Scheme, and it is well-versed in
+          this kind of song and dance. Several Scheme implementations compile
+          Scheme code to C code for portability and speed. This approach has
+          many wonderful benefits, such as allowing us to write full
+          applications in Scheme and compiling them into valid apps ready for
+          the iPhone app store.</p>
+
+        <div style="text-align:center;"><img src="/media/legacy/images/gambit-iphonesim.png" /></div>
+
+        <p><a href="http://github.com/jlongster/gambit-iphone-example/tree/master">View the source for my example application.</a></p>
+
+        <p>My Scheme implementation of choice is <a href="http://dynamo.iro.umontreal.ca/~gambit/wiki/index.php/Main_Page">Gambit Scheme</a>, which uses a Scheme->C compiler.  I wrote the above app in Gambit Scheme (view it in <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/lib/apps/app1.scm" title="app1.scm on github">app1.scm</a>), and I will show you how to get your Scheme apps running on the iPhone.  We need to compile the Gambit run-time for the iPhone first, then we can start writing our apps.</p>
+
+        <p>Note that, in the end, we are simply compiling a bunch of C code together to form a resulting binary.  It just so happens that there is quite a bit of C code in there which implements a few things like continuations, lists, and other helpful stuff.</p>
+
+        <p><strong><em>Note:</em></strong> <em>These instructions for building Gambit Scheme are out-of-date, you should refer to <a href="/software/iphone/scheme-iphone-example/">Using Scheme for iPhone apps</a> in my <a href="/software">software development</a> section for the most up-to-date information. -- February 9, 2010</em></p>
+
+        <h3>Compiling Gambit for the iPhone</h3>
+
+        <p>Gambit is insanely easy to compile for the iPhone.  This was very shocking to me; I was expecting at least <em>some</em> portability problems, and I haven't met any yet.  It does not need to be ported since it already supports the ARM architecture of the iPhone.</p>
+
+        <p>So, where do we start?  There are two target platforms we need to set environments up for: the iPhone simulator and the iPhone OS.  The main difference between the two is that the former uses the x86 architecture on your computer and the latter uses the ARM architecture on the iPhone.</p>
+
+        <h4>iPhone simulator</h4>
+
+        <p>First, <a href="http://dynamo.iro.umontreal.ca/~gambit/wiki/index.php/Distributions">download</a> Gambit.  I'm using v4.4.4.</p>
+
+        <p>Now we need to start poking around Xcode to find out what happens when you build something for the iPhone simulator.  The most useful thing in Xcode is the "Build Results" window found under the "Build" menu.  In this window, there are a few small icons in the bottom left.  One of these icons looks like a scribbled document.  If you click this icon, a window will pop up showing you <em>exactly</em> what commands Xcode is issuing to the system.  Using this, we can "reverse engineer" the iPhone build process.</p>
+
+        <p>The first thing you'll notice is that it's using a different instance of "gcc".  In fact, everything seems to be coming from an environment named iPhoneSimulator.platform in "/Developer".  This is achieved by calling the separate "gcc" instance with the "-isysroot" flag.</p>
+
+        <p>So it appears we need to setup Gambit to call this instance of "gcc" with this special environment.  "configure" respects $CC as the C compiler and $CFLAGS as any additional flags.  I discovered that "configure" sometimes calls the C compiler without the additional flags, however, so lets just set the C compiler to the following. The specific paths were copied from the Xcode "Build Results" window.</p>
+
+        <pre><code>$ export CC='/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.0
+            -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator2.2.sdk'
+        </code></pre>
+
+        <p>Note that we are using the "iPhoneSimulator2.2.sdk."  Change this to the appropriate SDK you want to use; since version 3.0 of the iPhone software just came out, "iPhoneSimulator3.0.sdk" should even be available.  Now we can actually compile Gambit and install it somewhere we can recall later:</p>
+
+        <pre><code>$ ./configure --prefix=/usr/local/Gambit-C/iPhoneSimulator
+            $ make
+            $ sudo make install
+        </code></pre>
+
+        <p>I'll make a quick note that Gambit highly encourages using the "--enable-single-host" configure option, as the code will be much faster at the expense of compile time.</p>
+
+        <p>Now we have a Gambit which uses the environment for the iPhone simulator instead of your default system.  The two important things are the "libgambc.a" in the "lib" directory, which is what we will link to when building the app for the simulator, and "gsc" in the "bin" directory which we will use to generate C files.</p>
+
+        <h4>iPhone OS</h4>
+
+        <p>This process is very similar to the iPhone Simulator build.  The interesting difference is that we are actually cross-compiling Gambit for the ARM architecture.  Important note: I had some troubles with re-compiling the same Gambit source even after a "make clean", so if you run into any problems, just download a fresh copy of Gambit.  I'll be submitting a bug report about this.</p>
+
+        <p>First, configure with the correct CC environment variable.  I discovered this cross-compiler much the same way I discovered the iPhone Simulator compiler (switch your Xcode project to target the iPhone OS, click build, and watch the results).  The only difference was that I had to manually expand "gcc-4.0" to "arm-apple-darwin9-gcc-4.0.1" which was sitting right beside it.</p>
+
+        <pre><code>$ export CC='/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/arm-apple-darwin9-gcc-4.0.1
+            -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.2.sdk'
+        </code></pre>
+
+        <p>Again, note that we used "iPhoneOS2.2.sdk".  You should change this to whatever you want; version 3.0 of the iPhone software would use "iPhoneOS3.0.sdk."  Next, configure and make it.  Note the extra option "--host" which tells it to cross-compile to ARM.</p>
+
+        <pre><code>$ ./configure --host=arm --prefix=/usr/local/Gambit-C/iPhoneOS
+            $ make
+            $ sudo make install
+        </code></pre>
+
+        <p>See the previous section about other recommended options to "configure".</p>
+
+        <p>Now we have the Gambit library compiled for the ARM architecture.</p>
+
+        <h3>Using Gambit in iPhone apps</h3>
+
+        <p>So, after all that work, how do we use it?  We basically need to embed Gambit in an iPhone app now and link with the appropriate library we just built.</p>
+
+        <p>I'll show you with an example.  My example application is a 2d OpenGL app.  Let's use the "OpenGL ES Application" project template as a starting point (seen in Xcode when creating a new project).  By default, this project renders a rotating colored square.</p>
+
+        <p><strong>First</strong>, you have to modify your "main" procedure to embed Gambit, which is the most complicated part.  Usually, Gambit provides a "main" entry point method for your compiled executable which does all this itself.  However, since we want our own "main" method, we need to setup Gambit's runtime. </p>
+
+        <p>Go ahead and view my application's <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/app/main.m">main.m</a> if you want to go ahead and see what it looks like.  One important note is that we set the debug settings to use stdout for REPL output, which is where error messages are sent (we don't really have access to a REPL yet).  This means that Gambit errors will be spit out to the console file, just like normal output from an iPhone app. There's no room here for me to fully explain Gambit, so I have to leave it at that.</p>
+
+        <p><strong>Second</strong>, we need to write any FFIs (foreign function interface) required for accessing iPhone functionality.  For my application, I need access to OpenGL ES, so I wrote a few functions in Scheme which call the appropriate C functions.  Here's how you would write you "glTranslatef" function:</p>
+
+        <pre><code>(define glTranslatef (c-lambda (GLfloat GLfloat GLfloat) void "glTranslatef"))
+        </code></pre>
+
+        <p>"<a href="http://www.iro.umontreal.ca/~gambit/doc/gambit-c.html#c_002dlambda" title="Gambit Documentation: c-lambda">c-lambda</a>" is the important form here.  This function is simple to interface.  Other ones, such as "glVertexPointer," are more difficult since they use C arrays.  You can view my complete FFI in <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/lib/ffi/gl.scm" title="gl.scm on github">gl.scm</a>.  It's a bit large because of requiring access to C arrays, and you can view the most important parts <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/lib/ffi/gl.scm#L483" title="gl.scm on github">here</a>.  As a side note, a few folks are working on automatically generating FFIs for Gambit.</p>
+
+        <p><strong>Third</strong>, you write your application code in Scheme.  For example, to draw a box with my OpenGL ES FFI, I would use this code:</p>
+
+        <pre><code>(define vertices
+            (vector-&gt;GLfloat* (vector -.05 -.05
+            .05  -.05
+            -.05  .05
+            .05   .05)))
+
+            (define (render)
+            (glLoadIdentity)
+
+            (glVertexPointer 2 GL_FLOAT 0 vertices)
+            (glEnableClientState GL_VERTEX_ARRAY)
+
+            (glColor4f .2 .5 .5 1.)
+            (glTranslatef 0. .5 .0)
+            (glRotatef .1 0. 0. 1.)
+            (glDrawArrays GL_TRIANGLE_STRIP 0 4))
+        </code></pre>
+
+        <p>To view my full application (as shown in the screenshot), checkout <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/lib/graphics.scm">graphics.scm</a>.</p>
+
+        <p><strong>Fourth</strong>, generate C procedures which you call from the Cocoa world at the right times, serving as "hooks."  For example, during "drawView" in the OpenGL view, I call "render" which looks like a C function, but actually calls into the Scheme world (see that in <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/app/EAGLView.m#L87" title="EAGLView.m on github">EAGLView.m</a>).</p>
+
+        <p>Here's how I turned the Scheme function "render" into a C function:</p>
+
+        <pre><code>(c-define (c-render) () void "render" ""
+            (render))
+        </code></pre>
+
+        <p>"<a href="http://www.iro.umontreal.ca/~gambit/doc/gambit-c.html#c_002ddefine" title="Gambit Documentation: c-define">c-define</a>" is the important form here.  It does the opposite of "c-lambda": it wraps a Scheme function in a C function.  You give it the function signature and you can be sure that it'll be available for other C code.</p>
+
+        <p>You can view this hook in <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/lib/init.scm#L19" title="init.scm:19 on github">init.scm</a>.</p>
+
+        <p>"get-title" is another Scheme function available to C which is used for the value of the label.  In Scheme, it just returns "Hello, World.  - Gambit Scheme" (in <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/lib/graphics.scm#L60" title="graphics.scm:60 on github">graphics.scm</a>).</p>
+
+        <p><strong>Fifth</strong>, compile your Scheme code to C.  The way I did this was to have one Scheme file which includes all of my modules: <a href="http://github.com/jlongster/gambit-iphone-example/blob/master/lib/init.scm">init.scm</a>.  Then, I compile it to C using Gambit's compiler.  Gambit will spit out 2 C files: init.c and init_.c.</p>
+
+        <pre><code>$ /usr/local/Gambit-C/iPhoneSimulator/bin/gsc -link init.scm
+            $ ls init*
+            init_.c init.c init.scm
+        </code></pre>
+
+        <p>"gsc" also supports the "-debug" flag which makes it produce good error messages.  During development, you should always use it.</p>
+
+        <p>We used the "gsc" which came with our iPhoneSimulator build.  Technically, when simply generating C from Scheme, I don't think it would matter which "gsc" we used, which is why it's fine to use the above code when targeting the iPhone OS.  Choosing the right "gsc" becomes important when you use it to automatically compile your code into dynamic libraries, which is a topic for another post.</p>
+
+        <p><strong>Sixth</strong>, configure the build environment and compile the application.  In Xcode, add those 2 generated C files to your project.  You need to add the search paths:  "/usr/local/Gambit-C/iPhoneOS/include" for header files, and "/usr/local/Gambit-C/iPhoneOS/lib" for linking.  Now we need to link Gambit: simply add the "-lgambc" flag to the linker.  The one last thing you need to do is add an additional C flag: "-D<em>_</em>LIBRARY", which tells Gambit not to generate a "main" function.  My project comes with an example Xcode project.</p>
+
+        <p>In addition, you may need to add another C flag: "-x objective-c", which forces everything to be compiled as Objective-C.  This is useful if you are writing FFIs for Cocoa Touch API's.</p>
+
+        <p>Now you should be able to compile and run it!  Note that we hardcoded "iPhoneOS" in the paths.  If you built Gambit the way I described earlier, you can change that to "iPhoneSimulator" to build the program for the simulator.  I'm not an Xcode expert, but I'm sure you can setup multiple built environments so that each device has the appropriate flags.</p>
+
+        <p>Here is my program running on my iPhone:</p>
+
+        <p><img src="/media/legacy/images/gambit-iphoneos.png" /></p>
+
+        <h3>What next?</h3>
+
+        <p>Although we got it working, it still feels a bit crude.  Debugging is a little awkward, there seems to be issues with standard output, etc.  There are certainly things that need to be smoothed out, but there should be no problem in doing so.  It should be somewhat easy to implement a remote REPL when an error occurs, meaning that I would be using REPL on my mac which is debugging problems real-time on the iPhone OS across the network.</p>
+
+        <p>I haven't tested everything, such as initiating TCP connections, opening files, etc., but there's no reason why it shouldn't work.  I also haven't run any serious benchmarks yet, and I can't say anything yet because I haven't optimized anything.  But Gambit is good at optimizing, and it should be fast enough.</p>
+
+        <p>One last note is that to fully comply with the User Agreement, you might have to compile Gambit without the interpreter, meaning "eval" wouldn't be available.  I'm not sure if it's simply that you can't use it, or if it's that the actual existence of something which could interpret code violates it.</p>
+
+        <p>It's exciting to be able to develop iPhone apps in Scheme!  For example, now I can do something <em>really</em> cool: when developing on the simulator, use Gambit's "load" procedure.  "load" takes a file and loads it at runtime.  If it's compiled, it will load it as a dynamic library.  If it's not compiled, it will interpret the code.  Using "load", I only have to install the application once, and then I can simply edit and/or compile files being loaded at runtime.</p>
+
+        <p>There are many more things to do, such as remote REPL debugging, more FFIs, etc., so expect more blog posts about this.  I think we've done something very cool here, and it's all thanks to Gambit.</p>
+
+        <p><a href="http://github.com/jlongster/gambit-iphone-example/tree/master">View the source for my example application.</a></p>
+        <div class="supplement">Comments are not implemented yet. In the meanwhile, send me an <a href="mailto:jlongster@jlongster.com">email</a>.</div></div><div class="footer"><a href="http://twitter.com/jlongster">twitter</a> | <a href="mailto:jlongster@jlongster.com">email</a> | powered by <a href="http://clojure.org/">clojure</a> | &copy; 2010 James Long</div><script type="text/javascript"> 
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+
+      </script> 
+      <script type="text/javascript"> 
+        try {
+        var pageTracker = _gat._getTracker("UA-9014321-1");
+        pageTracker._trackPageview();
+        } catch(err) {}
+      </script>
+    </div>
+  </body>
+</html>

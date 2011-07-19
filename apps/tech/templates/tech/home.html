@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block page_id %}tech{% endblock %}
+
+{% block content %}
+
+<h1>Tech</h1>
+
+<p>
+  Here is where I will post tech demos, articles, and screencasts.
+</p>
+
+<p>
+  <em>Coming soon</em>. I haven't posted anything here yet.
+</p>
+
+<!-- <p> -->
+<!--   Please choose from the following: -->
+<!-- </p> -->
+
+<!-- <ul> -->
+<!--   <li>Emacs</li> -->
+<!--   <li>Radmind</li> -->
+<!--   <li>Python</li> -->
+<!-- </ul> -->
+
+<h1>Latest Posts</h1>
+
+{% for post in posts %}
+<div class="post">
+  <h2><a href="{{ post.url() }}">{{ post.title }}</a></h2>
+  <div class="date">{{ post.published_date }}</div>
+  <p>{{ post.abstract }}</p>
+</div>
+{% else %}
+<em>None found</em>
+{% endfor %}
+  
+{% endblock %}

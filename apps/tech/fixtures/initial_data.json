@@ -1,0 +1,1 @@
+[{"pk": 4, "model": "tech.techpost", "fields": {"updated_date": "2011-07-18", "tags": [1]}}, {"pk": 5, "model": "tech.techpost", "fields": {"updated_date": "2011-07-18", "tags": [1]}}]

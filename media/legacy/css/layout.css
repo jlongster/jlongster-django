@@ -1,0 +1,215 @@
+
+html { height: 100%; margin-bottom: 1px; }
+img { border: 0; }
+
+/* slightly enhanced, universal clearfix hack
+   http://perishablepress.com/press/2008/02/05/lessons-learned-concerning-the-clearfix-css-hack/
+*/
+.clearfix:after {
+     visibility: hidden;
+     display: block;
+     font-size: 0;
+     content: " ";
+     clear: both;
+     height: 0;
+     }
+.clearfix { display: inline-block; }
+/* start commented backslash hack \*/
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+/* close commented backslash hack */
+.clear { clear: both; }
+
+
+body {
+    font-family: verdana, sans-serif;
+    font-size: .85em;
+}
+
+a, a:visited, a:active {
+    color: #6d9f69;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.body-wrapper {
+    width: 75%;
+    margin: 0 auto;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.footer {
+    font-size: .9em;
+    color: #999999;
+    padding-bottom: 10px;
+}
+
+.footer a,
+.footer a:visited,
+.footer a:active {
+    color: #999999;
+    text-decoration: underline;
+}
+
+.title a,
+.title a:visited,
+.title a:active,
+.title a:hover {
+    color: black;
+    text-decoration: none;
+}
+
+.title h1 {
+    margin-top: 10px;
+}
+
+.farm-banner {
+    position: absolute;
+    top: -10px;
+    right: 50px;
+    background: white url(/media/images/farm-banner.png) no-repeat 0 0;
+    width: 128px;
+    height: 101px;
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+}
+
+.farm-banner,
+.farm-banner a,
+.farm-banner a:active,
+.farm-banner a:visited {
+    color: white;
+    text-decoration: none;
+}
+
+.farm-banner p {
+    margin: 0;
+    padding-top: 27px;
+}
+
+.nav a,
+.nav a:visited,
+.nav a:active {
+    text-decoration: none;
+}
+
+.nav a.selected,
+.nav a:hover {
+    text-decoration: underline;
+}
+
+/*** Lists ***/
+
+.item-list {
+    margin: 0;
+    padding: 0;
+}
+
+.item-list li {
+    list-style: none;
+    margin: 10px 0;
+    padding: 0;
+    border: 0px;
+}
+
+.item-list .title {
+    background-color: #999999;
+    font-size: 1.2em;
+    padding: 5px 10px;
+}
+
+.item-list .title a {
+    color: white;    
+}
+
+.item-list .date {
+    color: #DDDDDD;
+    margin: 0;
+    padding: 10px 10px;
+    padding-bottom: 0;
+    font-size: .7em;
+    font-style: italic;
+}
+
+.item-list .body {
+    padding: 0px 10px;
+}
+
+hr {
+    height: 1px;
+    margin: 30px 0;
+    border: 0;
+    border-top: 1px dotted #999999;
+}
+
+/**** Articles ***/
+
+.supplement {
+    font-size: .95em;
+    font-style: italic;
+    color: #999999;
+}
+
+.supplement a {
+    text-decoration: underline;
+}
+
+.article-summary .supplement a {
+    text-decoration: none;
+    color: #999999;
+}
+
+.article-summary .supplement {
+    padding-top: 0px;
+    padding-bottom: 10px;
+}
+
+.article .supplement {
+    padding-bottom: 10px;
+}
+
+.article h2 {
+    margin-bottom: 10px;
+}
+
+.article .date {
+    color: #999999;
+    font-size: .9em;
+    font-style: italic;
+}
+
+.figure {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.article pre {
+    font-size: 1.25em;
+    max-height: 20em;
+    overflow: auto;
+    border: 2px solid #999999;
+    margin: 20px 0;
+    padding: 10px;
+}
+
+code {
+    font-size: 1.2em;
+}
+
+pre code {
+    font-size: 1em;
+}
+
+.outdated {
+    background-color: #FFFFAA;
+    padding: 15px;
+    text-align: center;
+    margin: 0px 0;
+    border: 2px solid yellow;
+}

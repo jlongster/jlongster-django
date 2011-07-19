@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <title>jlongster - Remotely debugging your iPhone Scheme apps with a REPL</title>
+    <link href="/media/legacy/css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="/feeds/blog" rel="alternate" title="jlongster - blog feed" type="application/rss+xml" />
+    <meta content="programming,graphics,2d,3d,rendering,scheme,lisp" name="keywords" />
+    <meta content="A collection of projects and blog posts about Lisp and Scheme from James Long" name="description" />
+    <script src="/media/js/jmod-1.0.4.min.js" type="text/javascript"></script>
+    <script type="text/javascript">jMod.config({path: '/media/js'});jMod.load('main');</script>
+  </head>
+  <body>
+    <div class="body-wrapper">
+      <div class="outdated">
+        <p>
+          This site has been decommissioned, but this content has been preserved because <br />
+          it is still useful to people.
+        </p>
+        <p>
+          Don't expect all the links to work.
+        </p>
+        <p>
+          Feel free to continue my work, copy these pages and projects, and do whatever <br />
+          you feel passionate about.  I am no longer developer this.
+      </div>
+
+      <div class="title"><a href="/"><h1>jlongster</h1></a></div><div class="nav"><a class="" href="/software">software development</a> - <a class="selected" href="/blog">blog</a> - <a class="" href="/about">about</a></div><div class="article"><h2>Remotely debugging your iPhone Scheme apps with a REPL</h2><div class="date">July 5, 2009</div><p><a href="http://github.com/jlongster/gambit-iphone-example/tree/665e721231dbe5f8400be5f96871d02ee32ebcf1/lib/util/remote-debugger">View the remote debugger source</a></p>
+
+<p>In an earlier blog post, I showed you how to develop on the iPhone with Gambit Scheme. Although that is cool, what about debugging? Haven't we just cut ourselves off from using either GDB (we aren't using Objective-C) or Gambit's debugger (we aren't running the program from a console)?</p>
+
+<p>A debugger is an essential tool, especially in dynamic languages like
+Scheme. It may not be as important in languages like Haskell because
+of type-checking, but even then you want to watch "data flow" as the
+program is running. I think we can say that using Scheme on the iPhone
+is impractical until we can use Gambit's debugger for our iPhone apps.</p>
+
+<p>Fortunately, Marc Feeley, implementer of Gambit Scheme, recently wrote
+a "proof of concept" remote debugger. It allows you to push REPLs from
+a running Gambit application (the client) to a different machine (the
+server).</p>
+
+<p>You guessed it. The client will be our iPhone application and the
+server will be our main computer, allowing us access to REPLs on our
+computer which are running inside the iPhone application.</p>
+
+<p>I think this is best explained in the screencast below. First, let me
+explain the philosophy of the remote debugger a little more.</p>
+
+<p>Marc wrote the remote debugger in response to someone asking about
+debugging multiple Gambit Scheme threads at once on the Gambit mailing
+list (<a
+href="https://webmail.iro.umontreal.ca/pipermail/gambit-list/2009-May/003465.html">view
+original message</a>). With the remote debugger, you can tell Gambit
+to create a remote REPL for errors on each thread. So if two threads errored, two separate debugging REPLs would open up on the server.</p>
+
+<p>Now we have facilities for debugging Scheme iPhone apps
+remotely. We can run Scheme apps on either the iPhone Simulator or
+the iPhone itself, and when an errors occurs we get a real Gambit REPL
+on our computer for debugging the problem.</p>
+
+<p>What's even cooler is that we have everything we need for running
+a full Scheme REPL to <em>interact with our iPhone app real-time</em>! Check
+it out in the screencast below.</p>
+
+<p>Please note that this library is still "proof of concept," and there are more things to figure out and bugs to fix.  I am not publishing it standalone yet, but you can find it included in the <a href="http://github.com/jlongster/gambit-iphone-example/tree/665e721231dbe5f8400be5f96871d02ee32ebcf1/lib/util/remote-debugger">gambit iPhone example</a> program on github or in Marc's <a href="https://webmail.iro.umontreal.ca/pipermail/gambit-list/2009-June/003650.html">reply</a>.</p>
+
+<p>You can also see how I integrated the debugger library in the example iPhone app <a href="http://github.com/jlongster/gambit-iphone-example/blob/665e721231dbe5f8400be5f96871d02ee32ebcf1/lib/init.scm#L7">here</a>.  A couple lines further down and you can see how I fire up a main REPL.</p>
+
+<div class="small">I apologize for all the static.  It was raining and I didn't realize it would pick it up.</div>
+
+<p><object width="544" height="385"><param name="movie" value="http://www.youtube.com/v/Q7c0rU9Lv28&amp;hl=en&amp;fs=1&amp;color1=0x234900&amp;color2=0x4e9e00"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/Q7c0rU9Lv28&amp;hl=en&amp;fs=1&amp;color1=0x234900&amp;color2=0x4e9e00" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="544" height="385"></embed></object></p>
+
+<p>Next up is support for touch events and access to the accelerometer!</p>
+
+<p><a href="http://github.com/jlongster/gambit-iphone-example/tree/665e721231dbe5f8400be5f96871d02ee32ebcf1/lib/util/remote-debugger">View the remote debugger source</a></p>
+<div class="supplement">Comments are not implemented yet. In the meanwhile, send me an <a href="mailto:jlongster@jlongster.com">email</a>.</div></div><div class="footer"><a href="http://twitter.com/jlongster">twitter</a> | <a href="mailto:jlongster@jlongster.com">email</a> | powered by <a href="http://clojure.org/">clojure</a> | &copy; 2010 James Long</div><script type="text/javascript"> 
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+
+</script> 
+<script type="text/javascript"> 
+      try {
+      var pageTracker = _gat._getTracker("UA-9014321-1");
+      pageTracker._trackPageview();
+      } catch(err) {}
+</script>
+</div></body>
+</html>

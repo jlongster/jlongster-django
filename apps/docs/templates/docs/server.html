@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      James Long's Sea of Servers
+    </title>
+
+    <style type="text/css">
+      body {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      li {
+        margin: 1em 0;
+      }
+
+      li li {
+        margin: 0;
+        padding: 0;
+      }
+
+      code {
+        color: #006600;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <h1>Servers!</h1>
+
+    Hello, my name is James Long. If you aren't me, how did you find
+    this page? You tricky bastard you. Here is the beginnings of
+    documentation for my server setup. This is really helpful to have
+    so I'm trying to document it fully. Other people might be
+    interested in this too.
+
+    <h1>What servers?</h1>
+        
+    What do I use servers for? I consider them a playground for new
+    ideas. It helps with that whole innovation thing. Also, I think
+    it's really important for programmers to know this stuff.
+
+    Right now, I host a few websites with my servers
+    (<a href="http://jongster.com/">http://jlongster.com/</a>). I
+    intend to play around with EC2 and cloud computing at some
+    point. There are lots of interesting applications with machine
+    learning, multiplayer games, and more. Whatever peaks my interest.
+
+    <h1>Documentation</h1>
+
+    <h2>Building out a new server</h2>
+    
+    I use <a href="http://rsug.itd.umich.edu/software/radmind/">Radmind</a>
+    to manage files on my servers. To get a new server up and running:
+
+    <ol>
+      <li>Install <a href="http://www.archlinux.org/">Arch Linux</a></li>
+      <li>Install <a href="http://jlongster.com/s/radmind-1.14.1.tar.gz">Radmind client (download)</a></li>
+      <li>
+        I have a Radmind server running in my VirtualBox Arch Linux
+        instance. Boot it up, add server's IP to
+        <code>/var/radmind/config</code>. Create ssh tunnel to new server. (TODO:
+        Need to move Radmind server to public server to avoid ssh
+        tunnel which hides real IP address)
+      </li>
+      <li>
+        Create a new Radmind command file, if not re-using a previous
+        one (you can customize which packages are installed)
+      </li>
+      <li>
+        On new server, download Radmin transcripts with the command:<br /><br />
+
+        <code>ktcheck -c sha1 -h localhost</code><br /><br />
+
+        (localhost because of ssh tunnel)
+      </li>
+      <li>
+        Apply the transcripts:<br /><br />
+
+        <code>fsdiff -A -c sha1 / | lapply -h localhost</code>
+      </li>
+      <li>The server filesystem now matches the one described in the command file.</li>
+      <li>
+        Localize the server however you please:
+
+        <ul>
+          <li>Run <code>localize &lt;hostname&gt;</code> to set the host name</li>
+          <li>Edit <code>/etc/rc.conf</code> to configure network, daemons, and other settings</li>
+          <li>
+            Add custom code to run at boot
+            in <code>/etc/rc.local</code>. If you will be
+            using <code>runit</code>, add the following line:<br /><br />
+
+            <code>/sbin/runsvdir-start & > /dev/null</code>
+          </li>
+        </ul>
+      </li>
+      <li>
+        If using <code>runit</code>, check out the <code>/services</code> directory:<br /><br />
+        
+        <code>sudo git clone ssh://james@linode/git/services.git /services</code><br /><br />
+
+        This repo simply has a list of submodules representing
+        available services. Various web servers and things are
+        included. Simply checkout the submodule and <code>runit</code>
+        will automatically start running the service.
+
+        If you wish to track the <code>/service</code> directory for
+        this particular machine, create a new branch with a meaningful
+        name. Otherwise, you can delete the <code>.git</code> or do
+        whatever you like from here.
+      </li>
+      <li>
+        If you wish to customize a service, create a new branch. If
+        it's a server-specific customization, name the branch after
+        the hostname. If not, give it a meaningful name representing
+        the reason for customizing.
+      </li>
+
+      <li>
+        Another git repo available includes all my websites as submodules. If interested, clone it:<br /><br />
+
+        <code>sudo git clone ssh://james@linode/git/sites.git /sites</code>
+      </li>
+    </ol>
+
+    <h2>Updating/creating transcripts</h2>
+    
+    <p>
+      Right now, I only have 1 transcript because I only have 1
+      server. As I get a better feeling for how I should split up the
+      transcripts into modules, I will do so.
+    </p>
+
+    <p>
+      I have applied this transcript on my linode server and my local
+      Arch Linux installation, so I have an exact copy of my server
+      running locally. I test updates to my server locally, update the
+      Radming transcript, and deploy changes through Radmind.
+    </p>
+
+    <h3>Creating a new base transcript</h3>
+    
+    There's also something called a <em>negative</em> transcript,
+    which are files Radmind should ignore. You almost always need to
+    recreate this also if you are creating a new base transcript, so
+    I'm including that in the following instructions.
+
+    <ol>
+      <li>
+        Assume that you want to replace the base
+        transcript <code>jlongster.T</code> and negative transcript <code>negative.T</code>
+      </li>
+      <li>
+        Remove the current transcript (if it exists) to start fresh:<br /><br />
+
+        <code>sudo rm /var/radmind/client/jlongster.T</code>
+      <li>
+        Create the new transcript by running:<br /><br />
+
+        <code>fsdiff -C -c sha1 -o /var/radmind/client/jlongster.T /</code>
+      </li>
+      <li>
+        Upload the new transcript and files (assuming Radming server
+        running at <code>localhost</code>):<br /><br />
+
+        <code>lcreate -h localhost /var/radmind/client/jlongster.T</code><br />
+        <code>lcreate -N -h localhost /var/radmind/client/negative.T</code>
+      </li>
+      <li>
+        <strong>On the Radmind server</strong>, verify and publish the
+        new transcript and files:<br /><br />
+
+        <code>sudo rm -r /var/radmind/file/jlongster.T</code><br />
+        <code>sudo rm /var/radmind/transcript/jlongster.T</code><br /><br />
+
+        <code>cd /var/radmind/tmp/transcript</code><br />
+        <code>lcksum -c sha1 -n jlongster.T</code><br />
+        <code>lcksum -c sha1 negative.T</code><br />
+        <code>mv /var/radmind/tmp/transcript/jlongster.T /var/radmind/transcript</code><br />
+        <code>mv /var/radmind/tmp/file/jlongster.T /var/radmind/file</code><br />
+        <code>mv /var/radmind/tmp/transcript/negative.T /var/radmind/transcript</code><br />
+        <code>mv /var/radmind/tmp/file/negative.T /var/radmind/file</code>
+      </li>
+    </ol>
+
+    <h3>Creating new additional transcripts (payloads)</h3>
+    
+    <p>
+      Once you have a base transcript, you can create smaller
+      transcripts which represent specific additions (this payload
+      includes node.js, or emacs functions, etc.).
+    </p>
+
+    <p>
+      I know how to do this, but I'm not documenting it yet because I
+      haven't incorporated it in my workflow yet.
+    </p>
+
+    <p>
+      Another neat thing you can do is create new base transcripts
+      with this method. You create whatever new transcripts you want
+      and use the <code>lmerge</code> command to merge them into the
+      base transcript. This is a lot faster than the instructions
+      above since you won't have to transfer the whole filesystem to
+      the Radmind server every time.
+    </p>
+    
+    <p>
+      <strong>TODO</strong>: I really need to adapt this into my
+      system, as I will get a lot more out of Radmind this way.
+    </p>
+
+    <p>
+      - James Long
+    </p>
+
+    <h3>Transcripts</h3>
+    
+    <p>The base OS should be Arch Linux 2010.05.</p>
+
+    <p>
+      <strong>Base</strong>, pacman -S &lt;package&gt;
+      <ul>
+        <li>zsh</li>
+        <li>openssh</li>
+        <li>base-devel</li>
+        <li>sudo</li>
+        <li>emacs</li>
+        
+      </ul>
+    </p>
+
+  </body>
+</html>

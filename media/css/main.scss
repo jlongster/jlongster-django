@@ -1,0 +1,203 @@
+
+$page-width: 800px;
+$page-padding: 12px;
+
+$grey: #424242;
+$blue: #3299BB;
+$green: #35b651;
+$orange: #d37d38;
+$lightgrey: darken(grayscale($blue), 10%);
+
+$blueprint-grid-columns: 10;
+$blueprint-grid-margin: 10px;
+$blueprint-grid-width: (($page-width - $page-padding * 2) - (($blueprint-grid-columns - 1) * $blueprint-grid-margin)) / $blueprint-grid-columns;
+
+@import "blueprint";
+@import "compass/typography/lists";
+
+// Base styles
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    font-family: Verdana;
+    font-size: .85em;
+}
+
+.clear {
+    clear: both;
+}
+
+.content {
+    width: $page-width - $page-padding * 2;
+    margin: 0 auto;
+    padding: 0 $page-padding;
+}
+
+// Header
+
+.header {
+    $height: 2.1em;
+    $top: .375em;
+
+    height: $height;
+    background-color: $grey;
+    color: white;
+    width: $page-width;
+    margin: 0 auto;
+
+    a, a:visited, a:active {
+        text-decoration: none;
+        color: white;                
+    }
+
+    .logo {
+        float: left;
+        padding-top: $top;
+        margin: 0 1em;
+        font-weight: bold;
+    }
+
+    .nav {
+        float: left;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+            float: left;
+
+            a, a:visited, a:active {
+                display: block;
+                height: $height - $top;
+                padding: $top .5em 0 .5em;
+            }
+        }
+
+        .sep {
+            padding: 0;
+            padding-top: $top;
+        }
+    }
+
+    .nav li:hover {
+        background-color: $lightgrey;
+
+        .subnav {
+            height: (1.25em + 1em) * 3;
+            -moz-transition: height .5s;
+        }
+    }
+
+    .subnav {
+        position: absolute;
+        top: $height;
+        left: 0;
+        height: 0;
+        list-style: none;
+        padding: 0;
+        background-color: $lightgrey;
+        overflow: hidden;
+        -moz-transition: height .5s;
+                
+        li {
+            float: none;
+
+            a, a:visited, a:active {
+                height: 1.25em;
+                padding: .5em 1em;
+            }
+        }
+
+        li:nth-of-type(2n-1) {
+            background-color: lighten($lightgrey, 5%);
+        }
+    }
+
+    .tech {
+        a:hover {
+            background-color: $blue;
+        }
+    }
+
+    .blog a:hover {
+        background-color: $green;
+    }
+
+    .contact a:hover {
+        background-color: $orange;
+    }
+}
+
+// Home
+
+#home .content {
+    @include container;
+
+    .intro {
+        font-style: italic;
+    }
+
+    .blog {
+        @include column(5);
+    }
+
+    .tech {
+        @include column(5, last);
+    }
+}
+
+a, a:visited, a:active {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.intro {
+    a, a:visited, a:active {
+        color: $green;
+    }
+}
+
+.tech .post,
+#tech .content,
+#tech-post .content {
+    a, a:visited, a:active {
+        color: $blue;
+    }
+}
+
+.blog .post,
+#blog .content,
+#post .content {
+    a, a:visited, a:active {
+        color: $green;
+    }
+}
+
+#contact .content {
+    a, a:visited, a:active {
+        color: $orange;
+    }
+}
+
+.post-main h1,
+.post h2 {
+    margin-bottom: 0;
+}
+
+.date {
+    color: grey;
+    font-style: italic;
+}
+
+.tags {
+    font-size: .9em;
+    font-style: italic;
+    color: grey;
+}

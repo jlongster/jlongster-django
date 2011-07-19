@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block page_id %}tech-post{% endblock %}
+
+{% block content %}
+
+{% if post %}
+  <div class="post-main">
+    <h1>{{ post.title }}</h1>
+
+    {{ post.content|restructuredtext }}
+
+    <div class="date">Last updated: {{ post.updated_date }}</div>
+  </div>
+{% else %}
+  <em>No post found, sorry!</em>
+{% endif %}
+
+{% endblock %}

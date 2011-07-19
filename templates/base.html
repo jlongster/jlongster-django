@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript"
+            data-main="main"
+            src="/media/js/require-jquery-1.4.4.js"></script>
+     <link rel="stylesheet" href="/media/css/main.css" type="text/css" />
+     <link href='http://fonts.googleapis.com/css?family=Tangerine:700&v2' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="{% block page_id %}{% endblock %}">
+
+    <div class="header">
+      <div class="logo">
+        <a href="/">jlongster</a>
+      </div>
+
+      <ul class="nav">
+        <li class="tech">
+          <a href="/tech/">tech</a>
+
+          <!-- <ul class="subnav"> -->
+          <!--   <li><a href="/tech/tag/emacs">Emacs</a></li> -->
+          <!--   <li><a href="/tech/tag/python">Python</a></li> -->
+          <!--   <li><a href="/tech/tag/django">Django</a></li> -->
+          <!-- </ul> -->
+        </li>
+
+        <li class="sep">&middot;</li>
+        <li class="blog"><a href="/blog">blog</a></li>
+        <li class="sep">&middot;</li>
+        <li class="contact"><a href="/contact">contact</a></li>
+      </ul>
+
+    </div>
+
+
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+
+  </body>
+</html>
